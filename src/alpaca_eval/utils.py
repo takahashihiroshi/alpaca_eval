@@ -10,6 +10,7 @@ import re
 import sys
 import time
 from collections import Counter
+from importlib.metadata import version
 from pathlib import Path
 from typing import Any, Callable, Optional, Sequence, Union
 
@@ -17,9 +18,9 @@ import datasets
 import numpy as np
 import numpy.typing as npt
 import pandas as pd
-import pkg_resources
 import tqdm
 import yaml
+from packaging.version import Version
 
 from . import constants
 
@@ -241,7 +242,7 @@ def check_imports(modules: Sequence[str], to_use: str = "this fnction"):
 
 def check_pkg_atleast_version(package, atleast_version):
     curr_version = get_package_version(package)
-    return pkg_resources.parse_version(curr_version) > pkg_resources.parse_version(atleast_version)
+    return Version(curr_version) > Version(atleast_version)
 
 
 def load_or_convert_to_dataframe(df=Union[AnyPath, AnyData, Callable, list, tuple], **kwargs):
@@ -663,7 +664,7 @@ def _string_to_dict(to_convert):
 
 def get_package_version(package_name: str) -> str:
     """Get the version of a package."""
-    return pkg_resources.get_distribution(package_name).version
+    return version(package_name)
 
 
 def get_multi_package_version(package_names: Sequence[str]) -> str:
