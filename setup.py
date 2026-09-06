@@ -50,6 +50,7 @@ setuptools.setup(
     packages=setuptools.find_packages("src"),
     author="The Alpaca Team",
     install_requires=[
+        "packaging",
         "python-dotenv",
         "datasets",
         "openai>=1.5.0",
