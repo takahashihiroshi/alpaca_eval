@@ -139,6 +139,9 @@ This will print the leaderboard to the console, and save both the leaderboard an
   is `gpt4_turbo` for AlpacaEval 2.0.
 - **output_path**: Path for saving annotations and leaderboard.
 
+This fork also includes an opt-in [GPT-5.4 weighted evaluator](docs/gpt54_evaluator.md)
+using a fixed model snapshot and logprobs with reasoning disabled.
+
 If you don't have the model outputs, you can
 use [`evaluate_from_model`](https://github.com/tatsu-lab/alpaca_eval/tree/main#evaluating-a-model) and
 pass a local path or a name of a

@@ -64,6 +64,7 @@ def openai_completions(
 
     decoding_kwargs :
         Additional kwargs to pass to `openai.Completion` or `openai.ChatCompletion`.
+        For chat models, `max_completion_tokens` takes precedence over `max_tokens`.
 
     Example
     -------
@@ -221,6 +222,9 @@ def _openai_completion_helper(
         if locals()[k] is not None:
             to_update[k] = locals()[k]
     kwargs.update(to_update)
+    if is_chat and kwargs.get("max_completion_tokens") is not None:
+        # Modern chat models use this budget instead of the legacy max_tokens.
+        kwargs.pop("max_tokens", None)
     curr_kwargs = copy.deepcopy(kwargs)
 
     # ensure no infinite loop
@@ -262,9 +266,10 @@ def _openai_completion_helper(
         except openai.OpenAIError as e:
             logging.warning(f"OpenAIError: {e}.")
             if "Please reduce" in str(e):
-                kwargs["max_tokens"] = int(kwargs["max_tokens"] * 0.8)
-                logging.warning(f"Reducing target length to {kwargs['max_tokens']}, Retrying...")
-                if kwargs["max_tokens"] == 0:
+                token_limit_key = "max_completion_tokens" if "max_tokens" not in curr_kwargs else "max_tokens"
+                curr_kwargs[token_limit_key] = int(curr_kwargs[token_limit_key] * 0.8)
+                logging.warning(f"Reducing target length to {curr_kwargs[token_limit_key]}, Retrying...")
+                if curr_kwargs[token_limit_key] == 0:
                     logging.exception("Prompt is already longer than max context length. Error:")
                     raise e
             elif "Please try again with a different prompt." in str(e):

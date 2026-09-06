@@ -1,0 +1,19 @@
+weighted_alpaca_eval_gpt5_4:
+  prompt_template: "alpaca_eval_clf_gpt4_turbo/alpaca_eval_clf.txt"
+  fn_completions: "openai_completions"
+  completions_kwargs:
+    model_name: "gpt-5.4-2026-03-05"
+    reasoning_effort: "none" # Required for logprobs.
+    max_completion_tokens: 1
+    temperature: 1
+    logprobs: true
+    top_logprobs: 5
+    # Approximate input-dominated cost; excludes output/cache/long-context pricing differences.
+    price_per_token: 0.0000025
+  fn_completion_parser: "logprob_parser"
+  completion_parser_kwargs:
+    numerator_token: "m"
+    denominator_tokens: ["m", "M"]
+    is_binarize: false
+  completion_key: "completions_all"
+  batch_size: 1
